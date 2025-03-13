@@ -2,9 +2,9 @@
 import { Alert } from 'react-native';
 import { EXPO_Url } from '@env';
 
-const obtenerAsignaturas = async (nombre) => {
+const obtenerAsignaturas = async (id) => {
     try {
-        const response = await fetch(`${EXPO_Url}/asignaturaspornombre/${nombre}`, {
+        const response = await fetch(`${EXPO_Url}/asignaturas/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

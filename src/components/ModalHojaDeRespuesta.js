@@ -26,6 +26,16 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
 
 
     const crearHojaDeRespuesta = async () => {
+        if (!selectedCurso || selectedCurso === "0") {
+            Alert.alert('Error', 'Por favor, seleccione un curso.');
+            return;
+        }
+
+        if (!asignatura.trim()) {
+            Alert.alert('Error', 'Por favor, ingrese una asignatura.');
+            return;
+        }
+
         try {
             const response = await AgregarPrueba(preguntas, alternativas, respuestas, asignatura, selectedCurso);
             if (response !== undefined && response.status === true) {
@@ -39,18 +49,18 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
     }
 
     return (
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={visible}
-                onRequestClose={hideConfirmModal}>
+        <Modal
+            animationType="fade"
+            transparent={true}
+            visible={visible}
+            onRequestClose={hideConfirmModal}>
+            <View style={styles.modalBackground}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <View style={styles.piker}>
                             <Picker
                                 selectedValue={selectedCurso}
                                 onValueChange={(itemValue) => setSelectedCurso(itemValue)}>
-
                                 <Picker.Item key="0" label="Seleccione un curso" value="0" />
                                 {cursos ? (
                                     cursos.map((curso, index) => (
@@ -69,13 +79,14 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
                         />
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: 300 }}>
                             <TouchableOpacity
-                                style={[styles.buttonClose]}
+                                style={styles.buttonClose}
                                 onPress={hideConfirmModal}
                                 activeOpacity={0.7}>
                                 <Text style={styles.textStyle}>Cancelar</Text>
                             </TouchableOpacity>
+                            
                             <TouchableOpacity
-                                style={[styles.button]}
+                                style={styles.button}
                                 onPress={crearHojaDeRespuesta}
                                 activeOpacity={0.7}>
                                 <Text style={styles.textStyle}>Guardar</Text>
@@ -83,7 +94,8 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
                         </View>
                     </View>
                 </View>
-            </Modal>
+            </View>
+        </Modal>
     );
 };
 

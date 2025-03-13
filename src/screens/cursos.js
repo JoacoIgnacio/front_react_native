@@ -94,7 +94,7 @@ const MisCursos = ({ navigation, route }) => {
 
 
 				<Modal
-					animationType="slide"
+					animationType="fade"
 					transparent={true}
 					visible={confirmDeleteModalVisible}
 					onRequestClose={hideConfirmDeleteModal}>
@@ -107,7 +107,7 @@ const MisCursos = ({ navigation, route }) => {
 							)}
 							<View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
 								<Pressable
-									style={[styles.buttonbg]}
+									style={[styles.buttonbg, styles.cancelar]}
 									onPress={hideConfirmDeleteModal}>
 									<Text style={styles.textStyle}>Cancelar</Text>
 								</Pressable>

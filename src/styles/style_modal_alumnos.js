@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
 		elevation: 5,
     },
     button: {
+        width: 100,
         backgroundColor: '#0780F8',
         padding: 10,
         borderRadius: 5,
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     buttonClose: {
+        width: 100,
         backgroundColor: '#dc3545',
         padding: 10,
         borderRadius: 5,
@@ -56,6 +58,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         fontSize: 16,
         marginBottom: 20
+    },
+    modalBackground: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

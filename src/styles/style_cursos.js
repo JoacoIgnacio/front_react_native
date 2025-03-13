@@ -23,6 +23,11 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		marginBottom: 5
 	},
+	cancelar: {
+		padding: 10,
+		borderRadius: 5,
+		marginBottom: 5
+	},
 	eliminar: {
 		backgroundColor: '#dc3545',
 		padding: 10,

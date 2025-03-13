@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Text, View, StyleSheet } from 'react-native';
 import { CameraView, Camera } from "expo-camera";
 import PasosModal from '../components/Modal';
-import obtenerAsignaturas from '../services/pruebas/services_asignaturas_nombre';
+import obtenerAsignaturas from '../services/pruebas/services_asignaturas_id';
 
 const QRScannerScreen = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false);
@@ -33,10 +33,10 @@ const QRScannerScreen = ({ navigation }) => {
                 nombre: parts[1],
                 apellido: parts[2],
                 curso_id: parseInt(parts[3], 10),
-                asignatura: parts[4]
+                asignatura_id: parts[4]
             };
 
-            const asignatura = await obtenerAsignaturas(alumno['asignatura']);
+            const asignatura = await obtenerAsignaturas(alumno['asignatura_id']);
             navigation.navigate('Gestion de prueba', { asignatura, alumno });
         } catch (error) {
             Alert.alert(`Error parsing JSON: ${error}`);

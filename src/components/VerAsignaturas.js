@@ -40,11 +40,11 @@ const VerAsignaturas = () => {
         try {
             // Obtener cursos relacionados con el ID de la asignatura
             const result_cursos = await obtenerCursosPorIdCurso(asignatura[5]);
-            
+
             // Si se obtienen los cursos correctamente, generar los formatos
             if (result_cursos) {
                 // Suponiendo que generarFormatosCurso es la función para generar los formatos
-                await generarFormatosAlumnos(result_cursos.curso['curso'], asignatura[1]);
+                await generarFormatosAlumnos(result_cursos.curso['id'], asignatura[0]);
             }
         } catch (error) {
             console.error('Error al generar los formatos:', error.message);
@@ -90,9 +90,6 @@ const VerAsignaturas = () => {
                             <View style={styles.rowContainer}>
                                 <Text style={styles.text}>{asignatura[1]}</Text>
                                 <View>
-                                    {/* <TouchableOpacity style={styles.eliminar} onPress={() => showConfirmDeleteModal(asignatura)}>
-                                        <Text style={styles.colorTextIcon}>Eliminar Hoja Respuesta</Text>
-                                    </TouchableOpacity> */}
                                     <TouchableOpacity style={styles.descarga} onPress={() => generarFormatos(asignatura)}>
                                         <Text style={styles.colorTextIcon}>Generar Formatos</Text>
                                     </TouchableOpacity>
@@ -105,7 +102,7 @@ const VerAsignaturas = () => {
                 )}
 
                 <Modal
-                    animationType="slide"
+                    animationType="fade"
                     transparent={true}
                     visible={confirmDeleteModalVisible}
                     onRequestClose={hideConfirmDeleteModal}>
