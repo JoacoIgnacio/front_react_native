@@ -91,7 +91,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign:'center',
         color: 'white'
-    }
+    },
+	selectCursoButton: {
+		backgroundColor: '#1e90ff', // Azul similar a "Nueva Hoja De Respuesta"
+		padding: 15,
+		borderRadius: 5,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginVertical: 10, // Espaciado
+	},
+	selectCursoText: {
+		color: 'white',
+		fontSize: 16,
+		fontWeight: 'bold',
+	},
+	
 });
 
 export default styles;

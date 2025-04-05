@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import ModalHojaDeRespuesta from './ModalHojaDeRespuesta';
 import { AntDesign } from '@expo/vector-icons';
@@ -19,6 +19,10 @@ const GenerarHojaDeRepuesta = ({ preguntas, alternativas }) => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
+    // Actualiza respuestas cuando cambien preguntas o alternativas
+    useEffect(() => {
+        setRespuestas(Array(preguntas).fill(null));
+    }, [preguntas, alternativas]);
     const handleRespuestaChange = (index, value) => {
         const nuevasRespuestas = [...respuestas];
         nuevasRespuestas[index] = value;

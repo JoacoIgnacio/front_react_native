@@ -42,7 +42,7 @@ const DetalleCurso = ({ route }) => {
 
         setTimeout(() => {
             setIsLoading(false);
-        }, 2000);
+        }, 1000);
     };
 
     const editar = async (nombre, apellido, alumno) => {
@@ -63,7 +63,7 @@ const DetalleCurso = ({ route }) => {
         } finally {
             setTimeout(() => {
                 setIsLoading(false);
-            }, 2000);
+            }, 1000);
         }
     }
 
@@ -79,7 +79,7 @@ const DetalleCurso = ({ route }) => {
         } finally {
             setTimeout(() => {
                 setIsLoading(false);
-            }, 2000);
+            }, 1000);
         }
     }
 

@@ -19,7 +19,7 @@ const MisCursos = ({ navigation, route }) => {
 			try {
 				setIsLoading(true);
 				const data_cursos = await obtenerCursosPorUser(user_id);
-				setCursos(data_cursos);
+				setCursos(data_cursos || []);
 			} catch (error) {
 				console.error("Error al obtener los cursos:", error);
 			} finally {
@@ -50,14 +50,26 @@ const MisCursos = ({ navigation, route }) => {
 
 
 	const eliminarCurso = async () => {
+		if (!cursoAEliminar) return;
+	
 		try {
 			setIsLoading(true);
+	
+			// Primero, eliminar alumnos asociados al curso
 			const response = await eliminarAlumnosYCurso(cursoAEliminar[0]);
+	
 			if (response) {
-				setCursos((prevCursos) => prevCursos.filter((curso) => curso[0] !== cursoAEliminar[0]));
+				// Luego de eliminar los alumnos, eliminamos el curso
+				setCursos((prevCursos) =>
+					prevCursos.filter((curso) => curso[0] !== cursoAEliminar[0])
+				);
+				Alert.alert("Curso eliminado", `El curso "${cursoAEliminar[1]}" y sus alumnos han sido eliminados.`);
+			} else {
+				Alert.alert("Error", "No se pudo eliminar el curso.");
 			}
 		} catch (error) {
 			console.error("Error al eliminar el curso:", error);
+			Alert.alert("Error", "Hubo un problema al eliminar el curso y sus alumnos.");
 		} finally {
 			hideConfirmDeleteModal();
 			setTimeout(() => {
@@ -65,6 +77,7 @@ const MisCursos = ({ navigation, route }) => {
 			}, 2000);
 		}
 	};
+	
 
 
 	return (

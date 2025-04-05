@@ -57,7 +57,7 @@
       "url": "https://u.expo.dev/9ba8dd08-af02-49e0-b443-cbdeed3ec0ac",
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD",
-      "enabled": true,
+      "enabled": true
 
     }
   }

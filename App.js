@@ -17,6 +17,7 @@ import CrearCursoFormulario from './src/screens/FormCursos';
 import GestionImagen from './src/screens/GestionImagen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+
 const Stack = createStackNavigator();
 
 const navigationOptions = {

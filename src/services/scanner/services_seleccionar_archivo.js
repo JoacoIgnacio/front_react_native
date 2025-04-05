@@ -6,16 +6,15 @@ const handlePostRequest = async ({ id, alumno, alternativas, ANSWER_KEY, imageUr
 
     formData.append('image', {
         uri: imageUri,
-        name: 'image.png', // Puedes cambiar el nombre y extensión según sea necesario
-        type: 'image/png' // Asegúrate de que el tipo MIME coincida con el formato de la imagen
+        name: 'image.png',
+        type: 'image/png'
     });
 
-
-    formData.append('total_columnas', total_columnas);
-    formData.append('alternativas', alternativas);
+    formData.append('total_columnas', String(total_columnas));
+    formData.append('alternativas', String(alternativas));
     formData.append('ANSWER_KEY', JSON.stringify(ANSWER_KEY));
     formData.append('alumno', JSON.stringify(alumno));
-    formData.append('id', id);
+    formData.append('id', String(id));
 
     try {
         const response = await fetch(`${EXPO_Url}/scanner`, {
@@ -23,23 +22,21 @@ const handlePostRequest = async ({ id, alumno, alternativas, ANSWER_KEY, imageUr
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-            body: formData,
+            body: formData
         });
 
         const data = await response.json();
-
         if (data.status) {
             return data;
         } else {
-            Alert.alert('Error', data.error || 'Hubo un problema al obtener los hojas de respuestas.');
+            Alert.alert('Error', data.mensaje || 'Hubo un problema al procesar la imagen');
             return null;
         }
     } catch (error) {
-        console.error('Error al realizar la solicitud POST:', error);
+        console.error('Error al realizar POST:', error);
+        Alert.alert('Error de red', error.message);
         return null;
     }
 };
 
 export default handlePostRequest;
-
-

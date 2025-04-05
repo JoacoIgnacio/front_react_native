@@ -6,7 +6,6 @@ import obtenerAsignaturas from '../services/pruebas/services_asignaturas_id';
 
 const QRScannerScreen = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false);
-
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
@@ -19,30 +18,20 @@ const QRScannerScreen = ({ navigation }) => {
         getCameraPermissions();
     }, []);
 
-
     const handleBarCodeScanned = async ({ type, data }) => {
+        if (scanned) return; // <- evita múltiples escaneos
         setScanned(true);
-        setShowModal(false);
+    
         try {
-            // Dividir la cadena en partes
-            const parts = data.split(" ");
-
-            // Crear un objeto JSON con las partes
-            const alumno = {
-                id: parseInt(parts[0], 10),
-                nombre: parts[1],
-                apellido: parts[2],
-                curso_id: parseInt(parts[3], 10),
-                asignatura_id: parts[4]
-            };
-
+            const alumno = JSON.parse(data);
             const asignatura = await obtenerAsignaturas(alumno['asignatura_id']);
-            navigation.navigate('Gestion de prueba', { asignatura, alumno });
+            navigation.replace('Gestion de prueba', { asignatura, alumno, imagen: ''}); // <-- replace evita volver hacia atrás escaneando de nuevo
         } catch (error) {
-            Alert.alert(`Error parsing JSON: ${error}`);
+            Alert.alert("Error al leer el código QR", error.message);
+            setScanned(false); // permite volver a intentar
         }
     };
-
+    
 
     if (hasPermission === null) {
         return <Text>Requesting for camera permission</Text>;
@@ -69,9 +58,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         margin: 0,
-        padding: 0
+        padding: 0,
     },
-
 });
 
 export default QRScannerScreen;
+

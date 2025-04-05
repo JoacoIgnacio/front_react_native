@@ -1,79 +1,69 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-    centeredView: {
+    modalBackground: {
         flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)', // Fondo oscuro
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 22,
+        zIndex: 9999, // Asegura que la modal se vea encima de otros elementos
+    },
+    centeredView: {
+        width: '90%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
     },
     modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
+        width: '100%',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
     },
-    button: {
-        width: 100,
-        backgroundColor: '#0780F8',
-        padding: 10,
+    selectCursoButton: {
+        backgroundColor: '#1e90ff',
+        padding: 12,
         borderRadius: 5,
-        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginBottom: 15,
+        width: '100%',
+    },
+    selectCursoText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    input: {
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        fontSize: 16,
+        color: 'black',
+        marginBottom: 15,
+        backgroundColor: 'white',
     },
     buttonClose: {
-        width: 100,
         backgroundColor: '#dc3545',
-        padding: 10,
+        padding: 12,
         borderRadius: 5,
-        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width: 120,
+    },
+    button: {
+        backgroundColor: '#1e90ff',
+        padding: 12,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 120,
     },
     textStyle: {
-        fontSize: 16,
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
-    },
-    modalText: {
-        marginBottom: 10,
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-    input: {
-        width: 300,
-        height: 45,
-        padding: 10,
-        backgroundColor: '#FFFFFF',
-        borderColor: '#B4B4B4',
-        borderWidth: 1,
-        borderRadius: 5,
-        fontSize: 18,
-        marginBottom: 20
-    },
-    piker: {
-        width: 300,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#1e90ff',
-        marginBottom: 20
-    },
-    modalBackground: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 });
 
