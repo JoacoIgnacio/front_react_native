@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Modal, Pressable } from 'react-native';
 import styles from '../styles/style_cursos';
 import CrearCurso from '../components/GenerarCurso';
 import obtenerCursosPorUser from '../services/cursos/services_cursos_id_user';
 import eliminarAlumnosYCurso from '../services/cursos/services_eliminar_alumnos_cursos';
 import Cargando from '../components/Cargando';
+import eliminarAlumnosAsignaturasYCurso from '../services/cursos/services_eliminar_alumnos_cursos';
+import { Text, View, ScrollView, TouchableOpacity, Modal, Pressable, Alert } from 'react-native';
 
 const MisCursos = ({ navigation, route }) => {
 	const user_id = 1;
@@ -49,27 +50,25 @@ const MisCursos = ({ navigation, route }) => {
 	};
 
 
-	const eliminarCurso = async () => {
+	const eliminarCurso = async () => { 
 		if (!cursoAEliminar) return;
 	
 		try {
 			setIsLoading(true);
 	
-			// Primero, eliminar alumnos asociados al curso
-			const response = await eliminarAlumnosYCurso(cursoAEliminar[0]);
+			const response = await eliminarAlumnosAsignaturasYCurso(cursoAEliminar[0]);
 	
 			if (response) {
-				// Luego de eliminar los alumnos, eliminamos el curso
 				setCursos((prevCursos) =>
 					prevCursos.filter((curso) => curso[0] !== cursoAEliminar[0])
 				);
-				Alert.alert("Curso eliminado", `El curso "${cursoAEliminar[1]}" y sus alumnos han sido eliminados.`);
+				Alert.alert("Curso eliminado", `El curso "${cursoAEliminar[1]}" y sus datos han sido eliminados.`);
 			} else {
 				Alert.alert("Error", "No se pudo eliminar el curso.");
 			}
 		} catch (error) {
 			console.error("Error al eliminar el curso:", error);
-			Alert.alert("Error", "Hubo un problema al eliminar el curso y sus alumnos.");
+			Alert.alert("Error", "Hubo un problema al eliminar el curso.");
 		} finally {
 			hideConfirmDeleteModal();
 			setTimeout(() => {
@@ -77,6 +76,7 @@ const MisCursos = ({ navigation, route }) => {
 			}, 2000);
 		}
 	};
+	
 	
 
 
@@ -126,9 +126,11 @@ const MisCursos = ({ navigation, route }) => {
 								</Pressable>
 								<Pressable
 									style={[styles.buttonbg, styles.eliminar]}
-									>
+									onPress={eliminarCurso}
+								>
 									<Text style={styles.textStyle}>Eliminar</Text>
 								</Pressable>
+
 							</View>
 						</View>
 					</View>

@@ -1,27 +1,42 @@
 import { Alert } from 'react-native';
+import eliminarCurso from '../cursos/services_eliminar_curso';
 import { EXPO_Url } from '@env';
 
-const eliminarCurso = async (curso_id) => {
+const eliminarAlumnosAsignaturasYCurso = async (curso_id) => {
     try {
-        const response = await fetch(`${EXPO_Url}/cursos/${curso_id}`, {
+        // 1. Eliminar alumnos
+        await fetch(`${EXPO_Url}/eliminaralumnosporcurso/${curso_id}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
         });
 
-        if (response.ok) {
-            return true
-        } else {
-            // Manejar errores de la respuesta DELETE
-            console.error('Error en la respuesta DELETE:', response.statusText);
-            Alert.alert('Error', 'Hubo un problema al eliminar el curso.');
+        // 2. Obtener asignaturas del curso
+        const responseAsignaturas = await fetch(`${EXPO_Url}/asignaturasporcurso/${curso_id}`);
+        const data = await responseAsignaturas.json();
+
+        if (data.status && Array.isArray(data.asignaturas) && data.asignaturas.length > 0) {
+            for (let asignatura of data.asignaturas) {
+                await fetch(`${EXPO_Url}/asignaturas/${asignatura[0]}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            }
         }
+
+        // 3. Eliminar curso
+        const eliminarCursoResponse = await fetch(`${EXPO_Url}/cursos/${curso_id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!eliminarCursoResponse.ok) throw new Error('Error al eliminar el curso');
+        return true;
+
     } catch (error) {
-        // Manejar errores de la solicitud DELETE
-        console.error('Error al enviar la solicitud DELETE:', error.message);
-        Alert.alert('Error', 'Hubo un problema al eliminar el curso.');
+        console.error('Error al eliminar curso y asociados:', error);
+        return false;
     }
 };
 
-export default eliminarCurso;
+
+export default eliminarAlumnosAsignaturasYCurso;
