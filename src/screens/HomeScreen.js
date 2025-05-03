@@ -35,8 +35,8 @@ export default function HomeScreen() {
                 <Text style={styles.subtitle}>Pasos a seguir:</Text>
                 <Text style={styles.text}>1° Crea tu curso con tus alumnos</Text>
                 <Text style={styles.text}>2° Crea tu hoja de respuestas</Text>
-                <Text style={styles.text}>3° Escanea el QR del evaluado</Text>
-                <Text style={styles.text}>4° Selecciona las respuestas correctas</Text>
+                <Text style={styles.text}>3° Selecciona las respuestas correctas</Text>
+                <Text style={styles.text}>4° Escanea el QR del evaluado</Text>
                 <Text style={styles.text}>5° Escanea la prueba del evaluado</Text>
                 <Text style={styles.text}>6° Obten tu nota y repite</Text>
             </View>

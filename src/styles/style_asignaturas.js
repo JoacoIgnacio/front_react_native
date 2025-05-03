@@ -105,6 +105,55 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
+	modalTitle: {
+		fontSize: 22,
+		fontWeight: 'bold',
+		marginBottom: 10,
+		color: '#1e90ff',
+		textAlign: 'center',
+	  },
+	  rowNota: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		borderBottomWidth: 1,
+		borderColor: '#ccc',
+		paddingVertical: 10,
+		paddingHorizontal: 10,
+	  },
+	  nombreAlumno: {
+		fontSize: 16,
+		color: '#333',
+	  },
+	  puntaje: {
+		fontSize: 16,
+		fontWeight: 'bold',
+		color: '#1e90ff',
+	  },
+	  cerrar: {
+		backgroundColor: '#e74c3c',
+		marginTop: 15,
+	  },
+	  modalView: {
+		backgroundColor: 'white',
+		borderRadius: 20,
+		padding: 20,
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+		width: '90%'
+	  },
+	  iconosContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		marginLeft: 10,
+		gap: 10,
+	  },
+	  
+	  
 	
 });
 

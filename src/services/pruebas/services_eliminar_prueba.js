@@ -1,11 +1,9 @@
-
 import { Alert } from 'react-native';
 import { EXPO_Url } from '@env';
 
-const eliminarHojasRespuestas = async (hojaId) => {
+const eliminarHojasRespuestas = async (pruebaId) => {
     try {
-        // Realizar la solicitud DELETE
-        const response = await fetch(`${EXPO_Url}/hojarespuestas/${hojaId}`, {
+        const response = await fetch(`${EXPO_Url}/pruebas/${pruebaId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -13,19 +11,15 @@ const eliminarHojasRespuestas = async (hojaId) => {
         });
 
         if (response.ok) {
-            // Actualizar el estado después de la eliminación
-            return hojaId;
+            return pruebaId;
         } else {
-            // Manejar errores de la respuesta DELETE
             console.error('Error en la respuesta DELETE:', response.statusText);
-            Alert.alert('Error', 'Hubo un problema al eliminar la hoja de respuestas.');
+            Alert.alert('Error', 'Hubo un problema al eliminar la prueba.');
         }
     } catch (error) {
-        // Manejar errores de la solicitud DELETE
         console.error('Error al enviar la solicitud DELETE:', error.message);
-        Alert.alert('Error', 'Hubo un problema al eliminar la hoja de respuestas.');
+        Alert.alert('Error', 'Hubo un problema al eliminar la prueba.');
     }
 };
-
 
 export default eliminarHojasRespuestas;
