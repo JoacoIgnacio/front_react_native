@@ -51,7 +51,15 @@ export default function ImagePickerComponent({ alumno, asignatura, ANSWER_KEY })
             });
 
             if (response?.image) {
-                navigation.navigate('Gestion de prueba', { alumno, asignatura, imagen: response.image });
+                navigation.navigate('Gestion de prueba', {
+                    alumno,
+                    asignatura,
+                    imagen: response.image,
+                    respuestas: response.respuestas,             // ✅ ¡ESTÁ OK!
+                    correctas: response.correctas,
+                    total_preguntas: response.total_preguntas
+                  });
+                  
             } else {
                 Alert.alert("Error", "Error al procesar la imagen.");
             }

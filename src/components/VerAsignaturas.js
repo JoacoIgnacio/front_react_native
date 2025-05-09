@@ -70,24 +70,37 @@ const VerAsignaturas = () => {
       const result_curso = await obtenerCursosPorIdCurso(asignatura[5]);
       const cursoId = result_curso.curso['id'];
       const asignaturaId = asignatura[0];
-
+  
       const zipUrl = `${EXPO_Url}/alumnos/${cursoId}/${asignaturaId}/descargarFormatos`;
       const zipFileUri = `${FileSystem.documentDirectory}${cursoId}_${asignaturaId}_formatos.zip`;
-
+  
+      // Realiza primero una verificación del estado
+      const response = await fetch(zipUrl);
+  
+      if (!response.ok) {
+        const data = await response.json();
+        const mensaje = data?.error || "Error al intentar descargar los formatos.";
+        Alert.alert("Atención", mensaje);
+        return;
+      }
+  
+      // Descargar el ZIP ahora que sabemos que está disponible
       const downloadResumable = FileSystem.createDownloadResumable(zipUrl, zipFileUri);
       const { uri } = await downloadResumable.downloadAsync();
-
+  
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri);
       } else {
         Alert.alert("No se puede compartir", "Tu dispositivo no soporta esta función.");
       }
-
+  
     } catch (error) {
-      Alert.alert("Atención", "Primero debes generar los formatos para poder descargarlos.");
+      Alert.alert("Error", "Hubo un problema al intentar descargar los formatos.");
       console.error("Error al descargar o compartir formatos:", error);
     }
   };
+  
+  
 
   const verNotas = async (asignatura_id) => {
     setIsLoading(true);

@@ -19,7 +19,7 @@ const Navbar = () => {
   };
 
   const onPressUser = () => {
-    navigation.navigate('Inicio');
+    navigation.navigate('UserProfileScreen');
   };
 
   return (

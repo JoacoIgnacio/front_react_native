@@ -19,7 +19,8 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "expo-font"
     ],
     "assetBundlePatterns": [
       "**/*"
@@ -58,7 +59,6 @@
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD",
       "enabled": true
-
     }
   }
 }
