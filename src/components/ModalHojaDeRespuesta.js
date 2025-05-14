@@ -24,7 +24,7 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
             }
         };
         fetchCursos();
-    }, [user_id]);
+    }, []);
 
     const handleCursoSeleccionado = (curso) => {
         console.log("Curso seleccionado:", curso);
@@ -33,7 +33,7 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
     };
 
     const crearHojaDeRespuesta = async () => {
-        if (!selectedCurso) {
+        if (!selectedCurso || !selectedCurso.id) {
             Alert.alert('Error', 'Por favor, seleccione un curso.');
             return;
         }
@@ -43,17 +43,32 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
             return;
         }
 
+        if (asignatura.length > 16) {
+            Alert.alert('Error', 'La asignatura no puede tener más de 16 caracteres.');
+            return;
+        }
+
         try {
-            const response = await AgregarPrueba(preguntas, alternativas, respuestas, asignatura, selectedCurso[0]); // Enviamos solo el ID del curso
-            if (response !== undefined && response.status === true) {
+            const response = await AgregarPrueba(
+                preguntas,
+                alternativas,
+                respuestas,
+                asignatura,
+                selectedCurso.id // Aquí se usa directamente el ID del curso seleccionado
+            );
+
+            if (response?.status) {
                 onPruebaAdded(response);
                 setAsignatura('');
+                setSelectedCurso(null);
                 onClose();
+                Alert.alert('Éxito', 'Hoja de respuesta creada correctamente.');
             } else {
                 Alert.alert('Error', response?.mensaje || 'Hubo un problema al crear la hoja de respuestas.');
             }
         } catch (error) {
-            Alert.alert('Error', error.message || 'Hubo un problema al crear la hoja de respuestas.');
+            console.error("Error al crear la hoja de respuesta:", error);
+            Alert.alert('Error', 'Hubo un problema al crear la hoja de respuestas.');
         }
     };
 
@@ -61,20 +76,20 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
         <Modal
             animationType="fade"
             transparent={true}
-            visible={visible}  // Asegurar que el valor `visible` está bien manejado
+            visible={visible}
             onRequestClose={onClose}
         >
             <View style={styles.modalBackground}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
 
-                        {/* Botón VISUAL para seleccionar curso */}
+                        {/* Botón para seleccionar curso */}
                         <TouchableOpacity
-                            style={styles.selectCursoButton} // Se asegura que el botón tenga un fondo visible
+                            style={styles.selectCursoButton}
                             onPress={() => setModalVisible(true)}
                         >
                             <Text style={styles.selectCursoText}>
-                                {selectedCurso ? `Curso: ${selectedCurso[1]}` : "Seleccionar Curso"}
+                                {selectedCurso ? `Curso: ${selectedCurso.curso}` : "Seleccionar Curso"}
                             </Text>
                         </TouchableOpacity>
 
@@ -90,7 +105,7 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
                         <TextInput
                             style={styles.input}
                             placeholder="Ingrese la Asignatura"
-                            placeholderTextColor="#555"  // Se cambia el color para asegurar visibilidad
+                            placeholderTextColor="#555"
                             value={asignatura}
                             onChangeText={setAsignatura}
                         />
@@ -100,7 +115,6 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
                             <TouchableOpacity
                                 style={styles.buttonClose}
                                 onPress={onClose}
-                                activeOpacity={0.7}
                             >
                                 <Text style={styles.textStyle}>Cancelar</Text>
                             </TouchableOpacity>
@@ -108,7 +122,6 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
                             <TouchableOpacity
                                 style={styles.button}
                                 onPress={crearHojaDeRespuesta}
-                                activeOpacity={0.7}
                             >
                                 <Text style={styles.textStyle}>Guardar</Text>
                             </TouchableOpacity>

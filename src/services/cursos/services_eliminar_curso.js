@@ -1,42 +1,27 @@
 import { Alert } from 'react-native';
-import eliminarCurso from '../cursos/services_eliminar_curso';
 import { EXPO_Url } from '@env';
 
-const eliminarAlumnosAsignaturasYCurso = async (curso_id) => {
+const eliminarCurso = async (curso_id) => {
     try {
-        // 1. Eliminar alumnos
-        await fetch(`${EXPO_Url}/eliminaralumnosporcurso/${curso_id}`, {
+        const response = await fetch(`${EXPO_Url}/cursos/${curso_id}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
 
-        // 2. Obtener asignaturas del curso
-        const responseAsignaturas = await fetch(`${EXPO_Url}/asignaturasporcurso/${curso_id}`);
-        const data = await responseAsignaturas.json();
-
-        if (data.status && Array.isArray(data.asignaturas) && data.asignaturas.length > 0) {
-            for (let asignatura of data.asignaturas) {
-                await fetch(`${EXPO_Url}/asignaturas/${asignatura[0]}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-            }
+        const data = await response.json();
+        if (data.status) {
+            Alert.alert('Éxito', `Curso eliminado correctamente. Alumnos eliminados: ${data.alumnos_eliminados}`);
+            return true;
+        } else {
+            Alert.alert('Error', data.error || 'Hubo un problema al eliminar el curso.');
+            return false;
         }
-
-        // 3. Eliminar curso
-        const eliminarCursoResponse = await fetch(`${EXPO_Url}/cursos/${curso_id}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!eliminarCursoResponse.ok) throw new Error('Error al eliminar el curso');
-        return true;
-
     } catch (error) {
-        console.error('Error al eliminar curso y asociados:', error);
+        Alert.alert('Error', `Error al eliminar el curso: ${error.message}`);
         return false;
     }
 };
 
-
-export default eliminarAlumnosAsignaturasYCurso;
+export default eliminarCurso;

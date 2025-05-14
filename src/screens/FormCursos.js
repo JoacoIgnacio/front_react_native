@@ -13,27 +13,23 @@ const CrearCursoFormulario = ({ navigation }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         if (curso.trim() === '') {
             setError('El nombre del curso es requerido');
             return;
         }
 
-        setIsLoading(true); // Mostrar el indicador de carga
-        setError(''); // Limpiar el mensaje de error
+        setIsLoading(true);
+        const response_guardar_curso = await guardarCurso(curso, 1); // user_id = 1
 
-        const response_guardar_curso = await guardarCurso(curso);
-        if (response_guardar_curso.status === true) {
-            const response_obtener_curso_id = await obtenerCursosPorIdCurso(response_guardar_curso.curso_id);
-            if (response_obtener_curso_id.status === true) {
-                setTimeout(() => {
-                    setIsLoading(false);
-                    Alert.alert('Correcto', response_guardar_curso.mensaje);
-                    navigation.navigate('Mis Cursos', { nuevoCurso: response_obtener_curso_id.curso });
-                }, 2000);
-            }
+        if (response_guardar_curso.status) {
+            navigation.navigate('Mis Cursos');
+            Alert.alert('Correcto', response_guardar_curso.mensaje);
+        } else {
+            Alert.alert('Error', response_guardar_curso.error || 'Hubo un problema al crear el curso.');
         }
+        setIsLoading(false);
     };
+
 
     return (
         <View style={styles.centeredView}>

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Modal, Text, Pressable, View, TextInput, Alert} from 'react-native';
+import { Modal, Text, Pressable, View, TextInput, Alert, ActivityIndicator } from 'react-native';
 import styles from '../styles/style_modal_alumnos';
 import AgregarAlumno from '../services/alumnos/services_agregar_alumnos';
 
 const ModalAlumnos = ({ visible, onClose, curso, onAlumnoAdded }) => {
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const hideConfirmModal = () => {
+        setNombre('');
+        setApellido('');
         onClose();
     };
 
@@ -23,28 +26,34 @@ const ModalAlumnos = ({ visible, onClose, curso, onAlumnoAdded }) => {
             Alert.alert('Error', 'Por favor, ingrese el apellido.');
             return;
         }
+
+        setIsLoading(true);
+
         try {
-            const response = await AgregarAlumno(nombre, apellido, curso[0]);
-            if (response.status === true) {
-                const nuevoAlumno = [
-                    response.alumno.id,
-                    response.alumno.nombre,
-                    response.alumno.apellido,
-                    response.alumno.curso_id
-                ];
+            const response = await AgregarAlumno(nombre, apellido, curso.id); // Usando curso.id para mayor claridad
+
+            if (response && response.status === true) {
+                const nuevoAlumno = {
+                    id: response.alumno.id,
+                    nombre: response.alumno.nombre,
+                    apellido: response.alumno.apellido,
+                    curso_id: response.alumno.curso_id
+                };
 
                 onAlumnoAdded(nuevoAlumno);
-                setNombre('');
-                setApellido('');
-                onClose();
+                hideConfirmModal();
+            } else {
+                Alert.alert('Error', response?.error || 'Hubo un problema al crear el alumno.');
             }
         } catch (error) {
             console.error("Error al crear el alumno:", error);
+            Alert.alert('Error', 'Hubo un problema al crear el alumno.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-
         <Modal
             animationType="fade"
             transparent={true}
@@ -53,6 +62,7 @@ const ModalAlumnos = ({ visible, onClose, curso, onAlumnoAdded }) => {
             <View style={styles.modalBackground}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
+                        <Text style={styles.title}>Agregar Alumno</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ingrese el Nombre del alumno"
@@ -73,15 +83,19 @@ const ModalAlumnos = ({ visible, onClose, curso, onAlumnoAdded }) => {
                             </Pressable>
                             <Pressable
                                 style={[styles.button]}
-                                onPress={crearAlumno}>
-                                <Text style={styles.textStyle}>Guardar</Text>
+                                onPress={crearAlumno}
+                                disabled={isLoading}>
+                                {isLoading ? (
+                                    <ActivityIndicator color="white" />
+                                ) : (
+                                    <Text style={styles.textStyle}>Guardar</Text>
+                                )}
                             </Pressable>
                         </View>
                     </View>
                 </View>
             </View>
         </Modal>
-
     );
 };
 

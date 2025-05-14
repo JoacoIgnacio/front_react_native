@@ -7,14 +7,10 @@ const eliminarAlumno = async (alumnoId) => {
             method: 'DELETE',
         });
 
-        if (response.ok) {
-            return alumnoId;
-        } else {
-            Alert.alert('Error', 'Hubo un problema al eliminar el alumno.');
-        }
+        return response.ok ? alumnoId : null;
     } catch (error) {
-        console.error('Error al eliminar el alumno:', error.message);
-        Alert.alert('Error', 'Hubo un problema al eliminar el alumno.');
+        Alert.alert('Error', `Hubo un problema al eliminar el alumno: ${error.message}`);
+        return null;
     }
 };
 

@@ -165,24 +165,35 @@ const VerAsignaturas = () => {
     }
   };
 
+  // Función actualizada en VerAsignaturas:
+  
   const handleCursoSeleccionado = (curso) => {
-    setSelectedCurso(curso);
-    setModalVisible(false);
-    setIsLoading(true);
-
-    const fetchAsignaturas = async () => {
-      try {
-        const data_asignaturas = await obtenerAsignaturasCurso(curso[0]);
-        setAsignaturas(data_asignaturas);
-      } catch (error) {
-        Alert.alert("Error", error.message || "No se pudo obtener las asignaturas.");
-      } finally {
-        setIsLoading(false);
+      console.log("Curso seleccionado:", curso); // Verificar que el curso llega correctamente
+      if (!curso || !curso.id) {
+          Alert.alert("Error", "Curso no válido. Inténtalo de nuevo.");
+          return;
       }
-    };
 
-    fetchAsignaturas();
+      setSelectedCurso(curso);
+      setModalVisible(false);
+      setIsLoading(true);
+
+      const fetchAsignaturas = async () => {
+          try {
+              const data_asignaturas = await obtenerAsignaturasCurso(curso.id); // Asegúrate de que sea curso.id
+              console.log("Asignaturas obtenidas:", data_asignaturas);
+              setAsignaturas(data_asignaturas || []);
+          } catch (error) {
+              console.error("Error al obtener las asignaturas:", error);
+              Alert.alert("Error", "Hubo un problema al obtener las asignaturas.");
+          } finally {
+              setIsLoading(false);
+          }
+      };
+
+      fetchAsignaturas();
   };
+
 
   return (
     <>
@@ -193,7 +204,7 @@ const VerAsignaturas = () => {
             onPress={() => setModalVisible(true)}
           >
             <Text style={styles.selectCursoText}>
-              {selectedCurso ? `Curso: ${selectedCurso[1]}` : "Seleccionar Curso"}
+                {selectedCurso ? `Curso: ${selectedCurso.curso}` : "Seleccionar Curso"}
             </Text>
           </TouchableOpacity>
 

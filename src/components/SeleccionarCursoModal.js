@@ -1,22 +1,30 @@
+// En SeleccionarCursoModal.js
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const SeleccionarCursoModal = ({ visible, cursos, onSelectCurso, onClose }) => {
+const SeleccionarCursoModal = ({ visible, cursos = [], onSelectCurso, onClose }) => {
     return (
         <Modal visible={visible} transparent={true} animationType="slide">
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.title}>Seleccionar Curso</Text>
-                    
-                    {cursos.map((curso, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={styles.cursoButton}
-                            onPress={() => onSelectCurso && onSelectCurso(curso)} // Verificamos que onSelectCurso exista
-                        >
-                            <Text style={styles.cursoText}>{curso[1]}</Text>
-                        </TouchableOpacity>
-                    ))}
+
+                    {cursos.length > 0 ? (
+                        cursos.map((curso) => (
+                            <TouchableOpacity
+                                key={curso.id}
+                                style={styles.cursoButton}
+                                onPress={() => {
+                                    console.log("Curso seleccionado en modal:", curso); // Verificar que el curso es correcto
+                                    onSelectCurso(curso);
+                                }}
+                            >
+                                <Text style={styles.cursoText}>{curso.curso}</Text>
+                            </TouchableOpacity>
+                        ))
+                    ) : (
+                        <Text>No hay cursos disponibles</Text>
+                    )}
 
                     <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
                         <Text style={styles.cancelText}>Cancelar</Text>
@@ -30,9 +38,9 @@ const SeleccionarCursoModal = ({ visible, cursos, onSelectCurso, onClose }) => {
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
         width: '80%',
@@ -44,7 +52,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 15,
+        marginBottom: 10,
     },
     cursoButton: {
         backgroundColor: '#1e90ff',

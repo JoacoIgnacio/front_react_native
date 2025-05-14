@@ -1,10 +1,10 @@
-
 import { EXPO_Url } from '@env';
-const guardarCurso = async (curso) => {
+
+const guardarCurso = async (curso, user_id) => {
     const nuevoCurso = {
         curso,
         activo: true,
-        user_id: 1,
+        user_id
     };
 
     try {
@@ -19,7 +19,7 @@ const guardarCurso = async (curso) => {
         const data = await response.json();
         return response.ok ? data : data;
     } catch (error) {
-        return error;
+        return { error: `Error al guardar el curso: ${error.message}` };
     }
 }
 

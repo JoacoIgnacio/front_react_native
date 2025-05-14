@@ -1,9 +1,8 @@
 import { Alert } from 'react-native';
 import { EXPO_Url } from '@env';
 
-const editarAlumno = async (alumnoId, nuevoNombre, nuevoApellido) => {
+const editarAlumno = async (alumnoId, nuevoNombre, nuevoApellido, curso_id) => {
     try {
-
         const response = await fetch(`${EXPO_Url}/alumnos/${alumnoId}`, {
             method: 'PUT',
             headers: {
@@ -12,17 +11,14 @@ const editarAlumno = async (alumnoId, nuevoNombre, nuevoApellido) => {
             body: JSON.stringify({
                 nombre: nuevoNombre,
                 apellido: nuevoApellido,
+                curso_id
             }),
         });
 
-        if (response.ok) {
-            return alumnoId;
-        } else {
-            Alert.alert('Error', 'Hubo un problema al editar el alumno.');
-        }
+        return response.ok ? alumnoId : null;
     } catch (error) {
-        console.error('Error al editar el alumno:', error.message);
-        Alert.alert('Error', 'Hubo un problema al editar el alumno.');
+        Alert.alert('Error', `Hubo un problema al editar el alumno: ${error.message}`);
+        return null;
     }
 };
 

@@ -16,13 +16,7 @@ const obtenerCursosPorIdCurso = async (curso_id) => {
         }
 
         const data = await response.json();
-
-        if (data.status) {
-            return data;
-        } else {
-            Alert.alert('Error', data.error || 'Hubo un problema al obtener los cursos.');
-            return null;
-        }
+        return data.curso ? data.curso : null;
     } catch (error) {
         Alert.alert('Error', `Error al obtener los datos: ${error.message}`);
         return null;

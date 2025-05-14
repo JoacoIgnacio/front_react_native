@@ -10,9 +10,10 @@ const CrearCurso = () => {
         if (navigation) {
             navigation.navigate('Crear Cursos');
         } else {
-            console.error('Error: navigation is undefined');
+            Alert.alert('Error', 'No se pudo navegar al formulario de creación de cursos.');
         }
     };
+
 
     return (
         <View style={styles.container}>

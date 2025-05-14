@@ -1,160 +1,197 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, View, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
-import styles from '../styles/style_detalle_curso';
-import { AntDesign } from '@expo/vector-icons';
-import ModalAlumnos from '../components/ModalAlumnos';
+import { View, Text, TouchableOpacity, ScrollView, Alert, StyleSheet, Modal, TextInput, Pressable } from 'react-native';
 import obtenerAlumnosPorCurso from '../services/alumnos/services_alumnos_curso';
-import eliminarAlumno from '../services/alumnos/services_eliminar_alumno';
+import AgregarAlumno from '../services/alumnos/services_agregar_alumnos';
 import editarAlumno from '../services/alumnos/services_editar_alumno';
+import eliminarAlumno from '../services/alumnos/services_eliminar_alumno';
 import Cargando from '../components/Cargando';
 
 const DetalleCurso = ({ route }) => {
     const { curso } = route.params;
     const [alumnos, setAlumnos] = useState([]);
-    const [editingAlumnoId, setEditingAlumnoId] = useState(null);
-    const [editedAlumnoValues, setEditedAlumnoValues] = useState({});
-    const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    const onPress = () => {
-        setShowModal(true);
-    };
-
-    const handleEditChange = (field, value) => {
-        setEditedAlumnoValues((prevValues) => ({
-            ...prevValues,
-            [field]: value,
-        }));
-    };
+    const [modalVisible, setModalVisible] = useState(false);
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
+    const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
 
     useEffect(() => {
-        const fetchCursos = async () => {
-            const data_cursos = await obtenerAlumnosPorCurso(curso[0]);
-            setAlumnos(data_cursos);
-        };
-        fetchCursos();
+        fetchAlumnos();
     }, [curso]);
 
-    const handleAlumnoAdded = (nuevoAlumno) => {
+    const fetchAlumnos = async () => {
         setIsLoading(true);
-        setAlumnos((prevAlumnos) => [...prevAlumnos, nuevoAlumno]);
-
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
+        const data_alumnos = await obtenerAlumnosPorCurso(curso.id);
+        setAlumnos(data_alumnos);
+        setIsLoading(false);
     };
 
-    const editar = async (nombre, apellido, alumno) => {
-        try {
-            setIsLoading(true);
-            const nuevoNombre = editedAlumnoValues.nombre?.trim() ?? nombre;
-            const nuevoApellido = editedAlumnoValues.apellido?.trim() ?? apellido;
-            const alumnoId = await editarAlumno(alumno, nuevoNombre, nuevoApellido);
+    const agregarAlumno = async () => {
+        if (!nombre.trim() || !apellido.trim()) {
+            Alert.alert('Error', 'Nombre y Apellido son requeridos.');
+            return;
+        }
 
-            if (alumnoId) {
-                const nuevosAlumnos = alumnos.map(a => a[0] === alumnoId ? [a[0], nuevoNombre, nuevoApellido] : a);
-                setAlumnos(nuevosAlumnos);
-                setEditingAlumnoId(null);
-                setEditedAlumnoValues({});
+        setIsLoading(true);
+        try {
+            const response = await AgregarAlumno(nombre, apellido, curso.id);
+            if (response) {
+                setAlumnos([...alumnos, response]);
+                setModalVisible(false);
+                setNombre('');
+                setApellido('');
             }
         } catch (error) {
-            Alert.alert("Error", error);
+            Alert.alert('Error', 'Hubo un problema al agregar el alumno.');
         } finally {
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1000);
+            setIsLoading(false);
         }
-    }
+    };
 
-    const eliminar = async (alumno) => {
+    const mostrarModalEditar = (alumno) => {
+        setAlumnoSeleccionado(alumno);
+        setNombre(alumno.nombre);
+        setApellido(alumno.apellido);
+        setModalVisible(true);
+    };
+
+    const actualizarAlumno = async () => {
+        if (!nombre.trim() || !apellido.trim()) {
+            Alert.alert('Error', 'Nombre y Apellido son requeridos.');
+            return;
+        }
+
+        setIsLoading(true);
         try {
-            setIsLoading(true);
-            const alumnoId = await eliminarAlumno(alumno);
-            if (alumnoId) {
-                setAlumnos(alumnos.filter(a => a[0] !== alumnoId));
+            const response = await editarAlumno(alumnoSeleccionado.id, nombre, apellido, curso.id);
+            if (response) {
+                setAlumnos(alumnos.map(alumno =>
+                    alumno.id === alumnoSeleccionado.id ? { ...alumno, nombre, apellido } : alumno
+                ));
+                setModalVisible(false);
+                setAlumnoSeleccionado(null);
+                setNombre('');
+                setApellido('');
             }
         } catch (error) {
-            Alert.alert("Error", error);
+            Alert.alert('Error', 'Hubo un problema al editar el alumno.');
         } finally {
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1000);
+            setIsLoading(false);
         }
-    }
+    };
 
-    const tableHead = ['Nombre', 'Apellido', 'Acciones'];
-    const tableData = alumnos.map((alumno) => {
-        const isEditing = editingAlumnoId === alumno[0];
-        const nombre = isEditing ? editedAlumnoValues.nombre ?? alumno[1] : alumno[1];
-        const apellido = isEditing ? editedAlumnoValues.apellido ?? alumno[2] : alumno[2];
-
-        return [
-            isEditing ? (
-                <TextInput
-                    key={`nombre-${alumno[0]}`}
-                    placeholder="Nombre"
-                    value={nombre}
-                    onChangeText={(value) => handleEditChange('nombre', value)}
-                    style={styles.tableText}
-                />
-            ) : (
-                <Text key={`nombre-${alumno[0]}`} style={styles.tableText}>{nombre}</Text>
-            ),
-            isEditing ? (
-                <TextInput
-                    key={`apellido-${alumno[0]}`}
-                    placeholder="Apellido"
-                    value={apellido}
-                    onChangeText={(value) => handleEditChange('apellido', value)}
-                    style={styles.tableText}
-                />
-            ) : (
-                <Text key={`apellido-${alumno[0]}`} style={styles.tableText}>{apellido}</Text>
-            ),
-            isEditing ? (
-                <TouchableOpacity key={`acciones-${alumno[0]}`} onPress={(event) => { event.preventDefault(); editar(nombre, apellido, alumno[0]) }} style={styles.descarga}>
-                    <Text style={styles.colorTextIcon}>Guardar Cambios</Text>
-                </TouchableOpacity>
-            ) : (
-                <View key={`acciones-${alumno[0]}`}>
-                    <TouchableOpacity onPress={() => setEditingAlumnoId(alumno[0])} style={styles.editar}>
-                        <Text style={styles.colorTextIcon}>Editar Alumno</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={(event) => { event.preventDefault(); eliminar(alumno[0]) }} style={styles.eliminar}>
-                        <Text style={styles.colorTextIcon}>Eliminar Alumno</Text>
-                    </TouchableOpacity>
-                </View>
-            ),
-        ];
-    });
+    const eliminarAlumnoPorId = async (alumnoId) => {
+        Alert.alert(
+            "Eliminar Alumno",
+            "¿Estás seguro de que deseas eliminar este alumno?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Eliminar",
+                    onPress: async () => {
+                        setIsLoading(true);
+                        try {
+                            const response = await eliminarAlumno(alumnoId);
+                            if (response) {
+                                setAlumnos(alumnos.filter(alumno => alumno.id !== alumnoId));
+                            }
+                        } catch (error) {
+                            Alert.alert('Error', 'Hubo un problema al eliminar el alumno.');
+                        } finally {
+                            setIsLoading(false);
+                        }
+                    },
+                },
+            ]
+        );
+    };
 
     return (
-        <><ScrollView style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 20 }}>
-            <View style={styles.container_general}>
-                <Text style={styles.text}>{curso[1]}</Text>
-                <View style={styles.container}>
-                    <TouchableOpacity onPress={onPress} style={styles.button}>
-                        <AntDesign name="plussquareo" size={24} color="white" />
-                        <Text style={styles.buttonText}>Agregar Alumno</Text>
-                    </TouchableOpacity>
-                    <ModalAlumnos
-                        curso={curso}
-                        visible={showModal}
-                        onClose={() => setShowModal(false)}
-                        onAlumnoAdded={handleAlumnoAdded} />
+        <ScrollView style={{ padding: 20 }}>
+            <Text style={styles.title}>Detalle Curso</Text>
+            <TouchableOpacity style={styles.agregarButton} onPress={() => setModalVisible(true)}>
+                <Text style={styles.agregarButtonText}>+ Agregar Alumno</Text>
+            </TouchableOpacity>
+
+            <View style={styles.table}>
+                <View style={styles.tableHeader}>
+                    <Text style={styles.tableHeaderText}>Nombre</Text>
+                    <Text style={styles.tableHeaderText}>Apellido</Text>
+                    <Text style={styles.tableHeaderText}>Acciones</Text>
                 </View>
+                {alumnos.length > 0 ? (
+                    alumnos.map((alumno) => (
+                        <View key={alumno.id} style={styles.tableRow}>
+                            <Text>{alumno.nombre}</Text>
+                            <Text>{alumno.apellido}</Text>
+                            <View style={styles.actions}>
+                                <TouchableOpacity style={styles.editar} onPress={() => mostrarModalEditar(alumno)}>
+                                    <Text style={styles.actionText}>Editar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.eliminar} onPress={() => eliminarAlumnoPorId(alumno.id)}>
+                                    <Text style={styles.actionText}>Eliminar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))
+                ) : (
+                    <Text style={{ textAlign: 'center', marginTop: 10 }}>No hay alumnos en este curso.</Text>
+                )}
             </View>
-            <Table borderStyle={{ borderWidth: 1, borderColor: '#ccc' }}>
-                <Row data={tableHead} style={styles.head} textStyle={styles.tableText} />
-                <Rows data={tableData} textStyle={styles.tableText} />
-            </Table>
+
+            {/* Modal para Agregar/Editar Alumno */}
+            <Modal visible={modalVisible} transparent animationType="fade">
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>
+                            {alumnoSeleccionado ? "Editar Alumno" : "Agregar Alumno"}
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Nombre"
+                            value={nombre}
+                            onChangeText={setNombre}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Apellido"
+                            value={apellido}
+                            onChangeText={setApellido}
+                        />
+                        <Pressable
+                            style={styles.guardarButton}
+                            onPress={alumnoSeleccionado ? actualizarAlumno : agregarAlumno}
+                        >
+                            <Text style={styles.buttonText}>
+                                {alumnoSeleccionado ? "Guardar Cambios" : "Guardar"}
+                            </Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
+
+            {isLoading && <Cargando />}
         </ScrollView>
-            {isLoading && (
-                <Cargando />
-            )}
-        </>
     );
 };
+
+const styles = StyleSheet.create({
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 15 },
+    agregarButton: { backgroundColor: '#007BFF', padding: 10, borderRadius: 5, marginBottom: 15 },
+    agregarButtonText: { color: '#FFFFFF', textAlign: 'center' },
+    table: { marginTop: 15 },
+    tableHeader: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#007BFF' },
+    tableHeaderText: { fontWeight: 'bold', color: '#FFFFFF', padding: 5 },
+    tableRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10 },
+    actions: { flexDirection: 'row', gap: 10 },
+    editar: { backgroundColor: '#FFC107', padding: 5, borderRadius: 5 },
+    eliminar: { backgroundColor: '#DC3545', padding: 5, borderRadius: 5 },
+    actionText: { color: '#FFFFFF' },
+    modalBackground: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+    modalContent: { backgroundColor: '#FFFFFF', padding: 20, borderRadius: 10, width: 300 },
+    input: { borderBottomWidth: 1, marginBottom: 15 },
+    guardarButton: { backgroundColor: '#007BFF', padding: 10, borderRadius: 5 },
+    buttonText: { color: '#FFFFFF', textAlign: 'center' },
+});
 
 export default DetalleCurso;
