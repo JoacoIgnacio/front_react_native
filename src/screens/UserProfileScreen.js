@@ -1,53 +1,21 @@
 // src/screens/UserProfileScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { EXPO_Url } from '@env';
+import { obtenerDatosUsuario, logoutUsuario } from '../services/users/services_user';
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    obtenerDatosUsuario();
+    cargarDatosUsuario();
   }, []);
 
-  const obtenerDatosUsuario = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        console.log("Token no encontrado, redirigiendo al login");
-        navigation.replace('Login');
-        return;
-      }
-
-      const response = await fetch(`${EXPO_Url}/auth/user`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setUserInfo(data);
-      } else {
-        console.error("Error al obtener datos del usuario:", data);
-        navigation.replace('Login');
-      }
-    } catch (error) {
-      console.error("Error al obtener datos del usuario:", error);
-      navigation.replace('Login');
-    }
-  };
-
-  const logoutUsuario = async () => {
-    try {
-      await AsyncStorage.removeItem('accessToken');
-      navigation.replace('Login');
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
+  const cargarDatosUsuario = async () => {
+    const data = await obtenerDatosUsuario(navigation);
+    if (data) {
+      setUserInfo(data);
     }
   };
 
@@ -65,7 +33,7 @@ const UserProfileScreen = () => {
         )}
       </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={logoutUsuario}>
+      <TouchableOpacity style={styles.logoutButton} onPress={() => logoutUsuario(navigation)}>
         <Text style={styles.logoutText}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
