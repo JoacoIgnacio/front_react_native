@@ -4,9 +4,10 @@ import styles from '../styles/style_modal_pruebas';
 import AgregarPrueba from '../services/pruebas/services_agregar_prueba';
 import obtenerCursosPorUser from '../services/cursos/services_cursos_id_user';
 import SeleccionarCursoModal from './SeleccionarCursoModal';
+import { obtenerDatosUsuario } from '../services/users/services_user';
 
 const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respuestas, onPruebaAdded }) => {
-    const user_id = 1;
+    
     const [asignatura, setAsignatura] = useState('');
     const [selectedCurso, setSelectedCurso] = useState(null);
     const [cursos, setCursos] = useState([]);
@@ -15,16 +16,23 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
     useEffect(() => {
         const fetchCursos = async () => {
             try {
-                console.log("Obteniendo cursos...");
-                const data_cursos = await obtenerCursosPorUser(user_id);
+                console.log("Obteniendo cursos del usuario autenticado...");
+                const usuario = await obtenerDatosUsuario();
+                if (!usuario || !usuario.id) {
+                    throw new Error("Usuario no encontrado");
+                }
+
+                const data_cursos = await obtenerCursosPorUser(usuario.id);
                 setCursos(data_cursos);
                 console.log("Cursos obtenidos:", data_cursos);
             } catch (error) {
                 console.error("Error al obtener cursos:", error);
+                Alert.alert("Error", "Hubo un problema al obtener los cursos.");
             }
         };
         fetchCursos();
     }, []);
+
 
     const handleCursoSeleccionado = (curso) => {
         console.log("Curso seleccionado:", curso);

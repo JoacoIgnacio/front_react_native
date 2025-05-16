@@ -28,21 +28,37 @@ const DetalleCurso = ({ route }) => {
 
     const agregarAlumno = async () => {
         if (!nombre.trim() || !apellido.trim()) {
-            Alert.alert('Error', 'Nombre y Apellido son requeridos.');
+            Alert.alert('Error', 'El nombre y apellido son obligatorios.');
             return;
         }
 
-        setIsLoading(true);
         try {
             const response = await AgregarAlumno(nombre, apellido, curso.id);
             if (response) {
-                setAlumnos([...alumnos, response]);
-                setModalVisible(false);
+                Alert.alert('Correcto', 'Alumno agregado exitosamente.');
+                setAlumnos(prevAlumnos => [...prevAlumnos, { nombre, apellido }]);
                 setNombre('');
                 setApellido('');
+                setModalVisible(false);
+            } else {
+                Alert.alert('Error', 'No se pudo agregar el alumno.');
             }
         } catch (error) {
-            Alert.alert('Error', 'Hubo un problema al agregar el alumno.');
+            Alert.alert('Error', `Hubo un problema al guardar el alumno: ${error.message}`);
+        }
+    };
+
+
+    // Esta función debe ser la misma que utilizas en useEffect para cargar los alumnos
+    const cargarAlumnosCurso = async () => {
+        setIsLoading(true);
+        try {
+            const alumnosData = await obtenerAlumnosCurso(curso.id);
+            console.log("Alumnos cargados:", alumnosData);
+            setAlumnos(alumnosData);
+        } catch (error) {
+            console.error("Error al cargar los alumnos:", error);
+            Alert.alert("Error", "Hubo un problema al cargar los alumnos.");
         } finally {
             setIsLoading(false);
         }
@@ -120,8 +136,8 @@ const DetalleCurso = ({ route }) => {
                     <Text style={styles.tableHeaderText}>Acciones</Text>
                 </View>
                 {alumnos.length > 0 ? (
-                    alumnos.map((alumno) => (
-                        <View key={alumno.id} style={styles.tableRow}>
+                    alumnos.map((alumno, index) => (
+                        <View key={alumno.id ? alumno.id : `alumno-${index}`} style={styles.tableRow}>
                             <Text>{alumno.nombre}</Text>
                             <Text>{alumno.apellido}</Text>
                             <View style={styles.actions}>
@@ -137,6 +153,7 @@ const DetalleCurso = ({ route }) => {
                 ) : (
                     <Text style={{ textAlign: 'center', marginTop: 10 }}>No hay alumnos en este curso.</Text>
                 )}
+
             </View>
 
             {/* Modal para Agregar/Editar Alumno */}

@@ -13,6 +13,7 @@ import generarFormatosAlumnos from '../services/pruebas/services_generar_formato
 import obtenerCursosPorIdCurso from '../services/cursos/services_curso_id';
 import obtenerNotasPorAsignatura from '../services/pruebas/services_pruebas';
 import eliminarAsignaturaCompleta from '../services/pruebas/services_eliminar_asignatura_completa';
+import { obtenerDatosUsuario } from '../services/users/services_user';
 
 import styles from '../styles/style_asignaturas';
 import SeleccionarCursoModal from '../components/SeleccionarCursoModal';
@@ -20,7 +21,6 @@ import Cargando from '../components/Cargando';
 import { EXPO_Url } from '@env';
 
 const VerAsignaturas = () => {
-  const user_id = 1;
   const [asignaturas, setAsignaturas] = useState([]);
   const [hojaAEliminar, setHojasRespuestasAEliminar] = useState(null);
   const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
@@ -32,17 +32,29 @@ const VerAsignaturas = () => {
   const [notasAlumnos, setNotasAlumnos] = useState([]);
 
   useEffect(() => {
-    setAsignaturas([]);
-    const fetchCursos = async () => {
-      try {
-        const data_cursos = await obtenerCursosPorUser(user_id);
-        setCursos(data_cursos);
-      } catch (error) {
-        console.error("Error al obtener los cursos:", error);
-      }
+    const cargarCursosUsuario = async () => {
+        try {
+            console.log("Cargando usuario y cursos...");
+            const usuario = await obtenerDatosUsuario();
+            console.log("Usuario obtenido:", usuario);
+            if (!usuario || !usuario.id) {
+                throw new Error('Usuario no encontrado');
+            }
+
+            const data_cursos = await obtenerCursosPorUser(usuario.id);
+            console.log("Cursos obtenidos:", data_cursos);
+            setCursos(data_cursos);
+        } catch (error) {
+            console.error("Error al obtener los cursos del usuario:", error);
+            Alert.alert("Error", "Hubo un problema al obtener los cursos.");
+        } finally {
+            setIsLoading(false);
+        }
     };
-    fetchCursos();
-  }, [user_id]);
+
+    cargarCursosUsuario();
+  }, []);
+
 
   const showConfirmDeleteModal = (asignatura) => {
     setHojasRespuestasAEliminar(asignatura);
