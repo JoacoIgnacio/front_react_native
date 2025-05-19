@@ -1,5 +1,4 @@
-
-import { Alert } from 'react-native';
+// services_asignaturas_curso.js
 import { EXPO_Url } from '@env';
 
 const obtenerAsignaturasCurso = async (curso_id) => {
@@ -12,16 +11,17 @@ const obtenerAsignaturasCurso = async (curso_id) => {
         });
 
         const data = await response.json();
+        console.log("Asignaturas obtenidas:", data);
 
         if (data.status) {
-            return data.asignaturas;
+            return data.asignaturas; 
         } else {
-            Alert.alert('Error', data.error || 'Hubo un problema al obtener los hojas de respuestas.');
-            return null;
+            console.warn("No hay asignaturas para este curso.");
+            return []; // Devuelve un array vacío si no hay asignaturas
         }
     } catch (error) {
-        console.error('Error al obtener las hojas de respuestas:', error.message);
-        Alert.alert('Error', 'Hubo un problema al obtener las hojas de respuestas.');
+        console.error("Error al obtener las asignaturas:", error.message);
+        return [];
     }
 };
 

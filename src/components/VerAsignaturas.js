@@ -231,13 +231,13 @@ const VerAsignaturas = () => {
             asignaturas.map((asignatura, index) => (
               <View key={index} style={styles.create}>
                 <View style={styles.rowContainer}>
-                  <Text style={styles.text}>{asignatura[1]}</Text>
+                  <Text style={styles.text}>{asignatura.asignatura}</Text>
                   <View>
                     <TouchableOpacity style={styles.descarga} onPress={() => generarFormatos(asignatura)}>
                       <Text style={styles.colorTextIcon}>Generar Formatos</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.descarga} onPress={() => descargarYCompartirFormatos(asignatura)}>
-                      <Text style={styles.colorTextIcon}>Descargar y Compartir</Text>
+                      <Text style={styles.colorTextIcon}>Descargar Formatos</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.descarga} onPress={() => verNotas(asignatura[0])}>
                       <Text style={styles.colorTextIcon}>Ver Notas</Text>
