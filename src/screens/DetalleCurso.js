@@ -54,10 +54,10 @@ const DetalleCurso = ({ route }) => {
         setIsLoading(true);
         try {
             const alumnosData = await obtenerAlumnosCurso(curso.id);
-            console.log("Alumnos cargados:", alumnosData);
+            //console.log("Alumnos cargados:", alumnosData);
             setAlumnos(alumnosData);
         } catch (error) {
-            console.error("Error al cargar los alumnos:", error);
+            //console.error("Error al cargar los alumnos:", error);
             Alert.alert("Error", "Hubo un problema al cargar los alumnos.");
         } finally {
             setIsLoading(false);

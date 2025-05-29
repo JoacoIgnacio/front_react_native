@@ -19,7 +19,7 @@ const obtenerNotasPorAsignatura = async (asignatura_id) => {
             return [];
         }
     } catch (error) {
-        console.error('Error al obtener las notas:', error.message);
+        //console.error('Error al obtener las notas:', error.message);
         Alert.alert('Error', 'No se pudieron obtener las notas.');
         return [];
     }

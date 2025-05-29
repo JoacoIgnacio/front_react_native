@@ -5,7 +5,7 @@ import PasosModal from '../components/Modal';
 import obtenerAsignaturas from '../services/pruebas/services_asignaturas_id';
 
 const QRScannerScreen = ({ navigation }) => {
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(true);  // ← Primero se muestra el modal
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
@@ -19,36 +19,49 @@ const QRScannerScreen = ({ navigation }) => {
     }, []);
 
     const handleBarCodeScanned = async ({ type, data }) => {
-        if (scanned) return; // <- evita múltiples escaneos
+        if (scanned) return;
         setScanned(true);
-    
+
         try {
             const alumno = JSON.parse(data);
             const asignatura = await obtenerAsignaturas(alumno['asignatura_id']);
-            navigation.replace('Gestion de prueba', { asignatura, alumno, imagen: ''}); // <-- replace evita volver hacia atrás escaneando de nuevo
+
+            // ✅ Redirige correctamente
+            navigation.replace('Gestion de prueba', {
+                asignatura,
+                alumno,
+                imagen: ''
+            });
+
         } catch (error) {
-            Alert.alert("Error al leer el código QR", error.message);
-            setScanned(false); // permite volver a intentar
+            Alert.alert(
+                "Error",
+                "El código QR no es válido.",
+                [{ text: "OK", onPress: () => navigation.replace("Inicio") }]
+            );
+        } finally {
+            setTimeout(() => setScanned(false), 2000);
         }
     };
-    
 
     if (hasPermission === null) {
-        return <Text>Requesting for camera permission</Text>;
+        return <Text>Solicitando permisos de cámara...</Text>;
     }
+
     if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
+        return <Text>No se puede acceder a la cámara.</Text>;
     }
 
     return (
         <View style={styles.container}>
-            <CameraView
-                onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-                barcodeScannerSettings={{
-                    barcodeTypes: ["qr", "pdf417"],
-                }}
-                style={StyleSheet.absoluteFillObject}
-            />
+            {!showModal && (
+                <CameraView
+                    cameraType="back"
+                    onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+                    barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+                    style={StyleSheet.absoluteFillObject}
+                />
+            )}
             <PasosModal visible={showModal} onClose={() => setShowModal(false)} />
         </View>
     );
@@ -63,4 +76,3 @@ const styles = StyleSheet.create({
 });
 
 export default QRScannerScreen;
-

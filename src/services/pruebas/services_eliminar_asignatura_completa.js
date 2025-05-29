@@ -16,7 +16,7 @@ const eliminarAsignaturaCompleta = async (asignatura_id) => {
             return false;
         }
     } catch (error) {
-        console.error('Error al eliminar asignatura:', error.message);
+        //console.error('Error al eliminar asignatura:', error.message);
         Alert.alert('Error', 'Hubo un problema al eliminar la asignatura.');
         return false;
     }

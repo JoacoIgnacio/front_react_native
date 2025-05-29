@@ -6,11 +6,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 import obtenerAsignaturasCurso from '../services/pruebas/services_asignaturas_curso';
 import obtenerCursosPorUser from '../services/cursos/services_cursos_id_user';
 import eliminarHojasRespuestas from '../services/pruebas/services_eliminar_prueba';
-import generarFormatosAlumnos from '../services/pruebas/services_generar_formatos';
-import obtenerCursosPorIdCurso from '../services/cursos/services_curso_id';
 import obtenerNotasPorAsignatura from '../services/pruebas/services_pruebas';
 import eliminarAsignaturaCompleta from '../services/pruebas/services_eliminar_asignatura_completa';
 import { obtenerDatosUsuario } from '../services/users/services_user';
@@ -31,29 +31,29 @@ const VerAsignaturas = () => {
   const [notasModalVisible, setNotasModalVisible] = useState(false);
   const [notasAlumnos, setNotasAlumnos] = useState([]);
 
-  useEffect(() => {
-    const cargarCursosUsuario = async () => {
+  useFocusEffect(
+    React.useCallback(() => {
+      const cargarCursosUsuario = async () => {
         try {
-            console.log("Cargando usuario y cursos...");
-            const usuario = await obtenerDatosUsuario();
-            console.log("Usuario obtenido:", usuario);
-            if (!usuario || !usuario.id) {
-                throw new Error('Usuario no encontrado');
-            }
+          const usuario = await obtenerDatosUsuario();
+          if (!usuario || !usuario.id) {
+            throw new Error('Usuario no encontrado');
+          }
 
-            const data_cursos = await obtenerCursosPorUser(usuario.id);
-            console.log("Cursos obtenidos:", data_cursos);
-            setCursos(data_cursos);
+          const data_cursos = await obtenerCursosPorUser(usuario.id);
+          setCursos(data_cursos);
         } catch (error) {
-            console.error("Error al obtener los cursos del usuario:", error);
-            Alert.alert("Error", "Hubo un problema al obtener los cursos.");
+          //console.error("Error al obtener cursos:", error);
+          Alert.alert("Error", "Hubo un problema al obtener los cursos.");
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
-    };
+      };
 
-    cargarCursosUsuario();
-  }, []);
+      cargarCursosUsuario();
+    }, [])
+  );
+
 
 
   const showConfirmDeleteModal = (asignatura) => {
@@ -66,53 +66,72 @@ const VerAsignaturas = () => {
     setConfirmDeleteModalVisible(false);
   };
 
-  const generarFormatos = async (asignatura) => {
-    try {
-      const result_cursos = await obtenerCursosPorIdCurso(asignatura[5]);
-      if (result_cursos) {
-        await generarFormatosAlumnos(result_cursos.curso['id'], asignatura[0]);
-      }
-    } catch (error) {
-      console.error('Error al generar los formatos:', error.message);
-    }
-  };
-
   const descargarYCompartirFormatos = async (asignatura) => {
     try {
-      const result_curso = await obtenerCursosPorIdCurso(asignatura[5]);
-      const cursoId = result_curso.curso['id'];
-      const asignaturaId = asignatura[0];
-  
-      const zipUrl = `${EXPO_Url}/alumnos/${cursoId}/${asignaturaId}/descargarFormatos`;
-      const zipFileUri = `${FileSystem.documentDirectory}${cursoId}_${asignaturaId}_formatos.zip`;
-  
-      // Realiza primero una verificación del estado
-      const response = await fetch(zipUrl);
-  
-      if (!response.ok) {
-        const data = await response.json();
-        const mensaje = data?.error || "Error al intentar descargar los formatos.";
-        Alert.alert("Atención", mensaje);
+      const cursoId = asignatura.curso_id || asignatura[5];
+      const asignaturaId = asignatura.id || asignatura[0];
+
+      //console.log("cursoId:", cursoId, "asignaturaId:", asignaturaId);
+
+      if (!cursoId || !asignaturaId) {
+        Alert.alert("Error", "No se pudo determinar el curso o la asignatura.");
         return;
       }
-  
-      // Descargar el ZIP ahora que sabemos que está disponible
+
+      const zipUrl = `${EXPO_Url}/alumnos/${cursoId}/${asignaturaId}/descargarFormatos`;
+      const zipFileUri = `${FileSystem.documentDirectory}${cursoId}_${asignaturaId}_formatos.zip`;
+
+      // Verifica si ya existe
+      const fileInfo = await FileSystem.getInfoAsync(zipFileUri);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(zipFileUri, { idempotent: true });
+      }
+
       const downloadResumable = FileSystem.createDownloadResumable(zipUrl, zipFileUri);
       const { uri } = await downloadResumable.downloadAsync();
-  
+
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri);
       } else {
-        Alert.alert("No se puede compartir", "Tu dispositivo no soporta esta función.");
+        Alert.alert("Descargado", "El archivo fue descargado, pero no se puede compartir automáticamente.");
       }
-  
     } catch (error) {
+      //console.error("Error al descargar o compartir formatos:", error);
       Alert.alert("Error", "Hubo un problema al intentar descargar los formatos.");
-      console.error("Error al descargar o compartir formatos:", error);
     }
   };
-  
-  
+  const descargarFormatoGeneral = async (asignatura) => {
+    try {
+      const cursoId = asignatura.curso_id || asignatura[5];
+      const asignaturaId = asignatura.id || asignatura[0];
+
+      if (!cursoId || !asignaturaId) {
+        Alert.alert("Error", "No se pudo determinar el curso o la asignatura.");
+        return;
+      }
+
+      const imageUrl = `${EXPO_Url}/formato_general/${cursoId}/${asignaturaId}`;
+      const fileUri = `${FileSystem.documentDirectory}formato_general_${cursoId}_${asignaturaId}.png`;
+
+      // Elimina si ya existe
+      const fileInfo = await FileSystem.getInfoAsync(fileUri);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(fileUri, { idempotent: true });
+      }
+
+      const downloadResumable = FileSystem.createDownloadResumable(imageUrl, fileUri);
+      const { uri } = await downloadResumable.downloadAsync();
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri);
+      } else {
+        Alert.alert("Descargado", "La imagen fue descargada, pero no se puede compartir automáticamente.");
+      }
+    } catch (error) {
+      //console.error("Error al descargar formato general:", error);
+      Alert.alert("Error", "Hubo un problema al descargar el formato general.");
+    }
+  };
 
   const verNotas = async (asignatura_id) => {
     setIsLoading(true);
@@ -133,13 +152,15 @@ const VerAsignaturas = () => {
   };
 
   const verMasDetalle = (nota) => {
-    const respuestasArray = JSON.parse(nota.respuestas || '[]');
+    const respuestasArray = Array.isArray(nota.respuestas) ? nota.respuestas : [];
     const respuestasLetras = respuestasArray.map(num => numeroALetra(num)).join(', ');
+
     Alert.alert(
       "Detalle del alumno",
       `${nota.nombre}\n\nCorrectas: ${nota.correctas}/${nota.total_preguntas}\n\nRespuestas:\n${respuestasLetras}`
     );
   };
+
 
   const eliminarNota = async (nota) => {
     Alert.alert(
@@ -157,7 +178,7 @@ const VerAsignaturas = () => {
                 Alert.alert('Éxito', 'Nota eliminada correctamente.');
               }
             } catch (error) {
-              console.error('Error al eliminar la nota:', error.message);
+              //console.error('Error al eliminar la nota:', error.message);
               Alert.alert('Error', 'No se pudo eliminar la nota.');
             }
           },
@@ -170,9 +191,9 @@ const VerAsignaturas = () => {
   const eliminarAsignaturaSeleccionada = async () => {
     hideConfirmDeleteModal();
     if (hojaAEliminar) {
-      const response = await eliminarAsignaturaCompleta(hojaAEliminar[0]);
+      const response = await eliminarAsignaturaCompleta(hojaAEliminar.id);
       if (response) {
-        setAsignaturas(prev => prev.filter(a => a[0] !== hojaAEliminar[0]));
+        setAsignaturas(prev => prev.filter(a => a.id !== hojaAEliminar.id));
       }
     }
   };
@@ -180,7 +201,7 @@ const VerAsignaturas = () => {
   // Función actualizada en VerAsignaturas:
   
   const handleCursoSeleccionado = (curso) => {
-      console.log("Curso seleccionado:", curso); // Verificar que el curso llega correctamente
+      //console.log("Curso seleccionado:", curso); // Verificar que el curso llega correctamente
       if (!curso || !curso.id) {
           Alert.alert("Error", "Curso no válido. Inténtalo de nuevo.");
           return;
@@ -193,10 +214,10 @@ const VerAsignaturas = () => {
       const fetchAsignaturas = async () => {
           try {
               const data_asignaturas = await obtenerAsignaturasCurso(curso.id); // Asegúrate de que sea curso.id
-              console.log("Asignaturas obtenidas:", data_asignaturas);
+              //console.log("Asignaturas obtenidas:", data_asignaturas);
               setAsignaturas(data_asignaturas || []);
           } catch (error) {
-              console.error("Error al obtener las asignaturas:", error);
+              //console.error("Error al obtener las asignaturas:", error);
               Alert.alert("Error", "Hubo un problema al obtener las asignaturas.");
           } finally {
               setIsLoading(false);
@@ -205,7 +226,6 @@ const VerAsignaturas = () => {
 
       fetchAsignaturas();
   };
-
 
   return (
     <>
@@ -226,20 +246,17 @@ const VerAsignaturas = () => {
             onSelectCurso={handleCursoSeleccionado}
             onClose={() => setModalVisible(false)}
           />
-
+          
           {asignaturas.length > 0 ? (
             asignaturas.map((asignatura, index) => (
               <View key={index} style={styles.create}>
                 <View style={styles.rowContainer}>
                   <Text style={styles.text}>{asignatura.asignatura}</Text>
                   <View>
-                    <TouchableOpacity style={styles.descarga} onPress={() => generarFormatos(asignatura)}>
-                      <Text style={styles.colorTextIcon}>Generar Formatos</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.descarga} onPress={() => descargarYCompartirFormatos(asignatura)}>
-                      <Text style={styles.colorTextIcon}>Descargar Formatos</Text>
+                      <Text style={styles.colorTextIcon}>Descargar Formatos Alumnos</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.descarga} onPress={() => verNotas(asignatura[0])}>
+                    <TouchableOpacity style={styles.descarga} onPress={() => verNotas(asignatura.id)}>
                       <Text style={styles.colorTextIcon}>Ver Notas</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.eliminar} onPress={() => showConfirmDeleteModal(asignatura)}>

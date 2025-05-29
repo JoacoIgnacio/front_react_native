@@ -5,13 +5,17 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import Cargando from '../components/Cargando';
 
-const Alternativa = ({ indice, onPress, isSelected }) => (
-    <TouchableOpacity onPress={onPress}>
-        <View style={[styles.alternativa, isSelected && styles.selectedAlternativa]}>
-            <Text>{indice + 1}</Text>
-        </View>
-    </TouchableOpacity>
-);
+const Alternativa = ({ indice, onPress, isSelected }) => {
+    const letra = String.fromCharCode(65 + indice); // 65 es "A"
+    return (
+        <TouchableOpacity onPress={onPress}>
+            <View style={[styles.alternativa, isSelected && styles.selectedAlternativa]}>
+                <Text>{letra}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
 
 const GenerarHojaDeRepuesta = ({ preguntas, alternativas }) => {
     const [respuestas, setRespuestas] = useState(Array(preguntas).fill(null));
@@ -19,7 +23,7 @@ const GenerarHojaDeRepuesta = ({ preguntas, alternativas }) => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    // Actualiza respuestas cuando cambien preguntas o alternativas
+    
     useEffect(() => {
         setRespuestas(Array(preguntas).fill(null));
     }, [preguntas, alternativas]);

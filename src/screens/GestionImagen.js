@@ -22,6 +22,7 @@ const GestionImagen = ({ route, navigation }) => {
   const [imageDimensions, setImageDimensions] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Redimensionar la imagen para que escale correctamente en el front
   useEffect(() => {
     if (imagen) {
       Image.getSize(
@@ -37,7 +38,7 @@ const GestionImagen = ({ route, navigation }) => {
       );
     }
   }, [imagen]);
-
+  
   const handleGuardarPrueba = async () => {
     try {
       setIsSaving(true);
@@ -90,18 +91,20 @@ const GestionImagen = ({ route, navigation }) => {
         <ImagePickerComponent alumno={alumno} asignatura={asignatura} ANSWER_KEY={ANSWER_KEY} />
       </View>
 
-      <View style={styles.imageWrapper}>
-        {imagen && imageDimensions ? (
-          <Image
-            source={{ uri: imagen }}
-            style={[styles.image, imageDimensions]}
-            resizeMode="contain"
-            onError={() => Alert.alert('Error al cargar la imagen')}
-          />
-        ) : (
-          <AntDesign name="filetext1" size={150} color="white" />
-        )}
-      </View>
+      <ScrollView horizontal contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View style={[styles.imageWrapper, { minHeight: 1000 }]}>
+          {imagen && imageDimensions ? (
+            <Image
+              source={{ uri: imagen }}
+              style={[styles.image, imageDimensions]}
+              resizeMode="contain"
+              onError={() => Alert.alert('Error al cargar la imagen')}
+            />
+          ) : (
+            <AntDesign name="filetext1" size={150} color="white" />
+          )}
+        </View>
+      </ScrollView>
 
       {/* Botón Confirmar y Guardar */}
       {imagen && (

@@ -46,7 +46,7 @@ const ModalAlumnos = ({ visible, onClose, curso, onAlumnoAdded }) => {
                 Alert.alert('Error', response?.error || 'Hubo un problema al crear el alumno.');
             }
         } catch (error) {
-            console.error("Error al crear el alumno:", error);
+            //console.error("Error al crear el alumno:", error);
             Alert.alert('Error', 'Hubo un problema al crear el alumno.');
         } finally {
             setIsLoading(false);

@@ -16,7 +16,7 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
     useEffect(() => {
         const fetchCursos = async () => {
             try {
-                console.log("Obteniendo cursos del usuario autenticado...");
+                //console.log("Obteniendo cursos del usuario autenticado...");
                 const usuario = await obtenerDatosUsuario();
                 if (!usuario || !usuario.id) {
                     throw new Error("Usuario no encontrado");
@@ -24,9 +24,9 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
 
                 const data_cursos = await obtenerCursosPorUser(usuario.id);
                 setCursos(data_cursos);
-                console.log("Cursos obtenidos:", data_cursos);
+                //console.log("Cursos obtenidos:", data_cursos);
             } catch (error) {
-                console.error("Error al obtener cursos:", error);
+                //console.error("Error al obtener cursos:", error);
                 Alert.alert("Error", "Hubo un problema al obtener los cursos.");
             }
         };
@@ -35,7 +35,7 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
 
 
     const handleCursoSeleccionado = (curso) => {
-        console.log("Curso seleccionado:", curso);
+        //console.log("Curso seleccionado:", curso);
         setSelectedCurso(curso);
         setModalVisible(false);
     };
@@ -75,7 +75,7 @@ const ModalHojaDeRespuesta = ({ visible, onClose, preguntas, alternativas, respu
                 Alert.alert('Error', response?.mensaje || 'Hubo un problema al crear la hoja de respuestas.');
             }
         } catch (error) {
-            console.error("Error al crear la hoja de respuesta:", error);
+            //console.error("Error al crear la hoja de respuesta:", error);
             Alert.alert('Error', 'Hubo un problema al crear la hoja de respuestas.');
         }
     };

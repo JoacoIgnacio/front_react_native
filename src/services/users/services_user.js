@@ -23,12 +23,12 @@ export const obtenerDatosUsuario = async (navigation) => {
     if (response.ok) {
       return data;
     } else {
-      console.error("Error al obtener datos del usuario:", data);
+      //console.error("Error al obtener datos del usuario:", data);
       navigation.replace('Login');
       return null;
     }
   } catch (error) {
-    console.error("Error al obtener datos del usuario:", error);
+    //console.error("Error al obtener datos del usuario:", error);
     navigation.replace('Login');
     return null;
   }
@@ -40,6 +40,6 @@ export const logoutUsuario = async (navigation) => {
     await AsyncStorage.removeItem('accessToken');
     navigation.replace('Login');
   } catch (error) {
-    console.error("Error al cerrar sesión:", error);
+    //console.error("Error al cerrar sesión:", error);
   }
 };

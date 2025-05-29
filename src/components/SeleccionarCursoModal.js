@@ -15,7 +15,7 @@ const SeleccionarCursoModal = ({ visible, cursos = [], onSelectCurso, onClose })
                                 key={curso.id}
                                 style={styles.cursoButton}
                                 onPress={() => {
-                                    console.log("Curso seleccionado en modal:", curso); // Verificar que el curso es correcto
+                                    //console.log("Curso seleccionado en modal:", curso); // Verificar que el curso es correcto
                                     onSelectCurso(curso);
                                 }}
                             >

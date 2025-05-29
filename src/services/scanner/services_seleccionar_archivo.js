@@ -33,7 +33,7 @@ const handlePostRequest = async ({ id, alumno, alternativas, ANSWER_KEY, imageUr
             return null;
         }
     } catch (error) {
-        console.error('Error al realizar POST:', error);
+        //console.error('Error al realizar POST:', error);
         Alert.alert('Error de red', error.message);
         return null;
     }

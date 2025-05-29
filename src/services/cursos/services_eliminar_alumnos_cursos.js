@@ -20,12 +20,12 @@ const eliminarAlumnosYCurso = async (curso_id) => {
             }
         } else {
             // Manejar errores de la respuesta DELETE para alumnos
-            console.error('Error en la respuesta DELETE para alumnos:', responseAlumnos.statusText);
+            //console.error('Error en la respuesta DELETE para alumnos:', responseAlumnos.statusText);
             Alert.alert('Error', 'Hubo un problema al eliminar los alumnos.');
         }
     } catch (error) {
         // Manejar errores de la solicitud DELETE para alumnos
-        console.error('Error al enviar la solicitud DELETE para alumnos:', error.message);
+        //console.error('Error al enviar la solicitud DELETE para alumnos:', error.message);
         Alert.alert('Error', 'Hubo un problema al eliminar los alumnos.');
     }
 };

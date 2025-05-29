@@ -18,7 +18,7 @@ const generarFormatosAlumnos = async (curso, asignatura) => {
             Alert.alert('Error', data.mensaje);
         }
     } catch (error) {
-        console.error('Error al obtener las hojas de respuestas:', error.message);
+        //console.error('Error al obtener las hojas de respuestas:', error.message);
         Alert.alert('Error', 'Hubo un problema al obtener las hojas de respuestas.');
     }
 };

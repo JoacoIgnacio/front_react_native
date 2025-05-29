@@ -51,7 +51,7 @@ const AgregarPrueba = async (preguntas, alternativas, respuestas, asignatura, cu
 
     } catch (error) {
         // Manejar errores de la solicitud
-        console.error('Error al enviar la solicitud:', error.message);
+        //console.error('Error al enviar la solicitud:', error.message);
         Alert.alert('Error', 'Hubo un problema al enviar la solicitud.');
     }
 };

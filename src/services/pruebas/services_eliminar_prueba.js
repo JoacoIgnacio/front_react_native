@@ -13,11 +13,11 @@ const eliminarHojasRespuestas = async (pruebaId) => {
         if (response.ok) {
             return pruebaId;
         } else {
-            console.error('Error en la respuesta DELETE:', response.statusText);
+            //console.error('Error en la respuesta DELETE:', response.statusText);
             Alert.alert('Error', 'Hubo un problema al eliminar la prueba.');
         }
     } catch (error) {
-        console.error('Error al enviar la solicitud DELETE:', error.message);
+        //console.error('Error al enviar la solicitud DELETE:', error.message);
         Alert.alert('Error', 'Hubo un problema al eliminar la prueba.');
     }
 };

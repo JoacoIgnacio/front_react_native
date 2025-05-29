@@ -20,7 +20,7 @@ const obtenerCursosPorUser = async (user_id) => {
         const data = await response.json();
         return data.cursos || [];
     } catch (error) {
-        console.error("Error al obtener cursos:", error);
+        //console.error("Error al obtener cursos:", error);
         Alert.alert('Error', `Error de red: ${error.message}`);
         return [];
     }

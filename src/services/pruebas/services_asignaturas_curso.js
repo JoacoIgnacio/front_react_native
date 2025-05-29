@@ -20,7 +20,7 @@ const obtenerAsignaturasCurso = async (curso_id) => {
             return []; // Devuelve un array vacío si no hay asignaturas
         }
     } catch (error) {
-        console.error("Error al obtener las asignaturas:", error.message);
+        //console.error("Error al obtener las asignaturas:", error.message);
         return [];
     }
 };

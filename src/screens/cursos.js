@@ -21,9 +21,9 @@ const MisCursos = ({ navigation, route }) => {
         React.useCallback(() => {
             const cargarUsuarioYCursos = async () => {
                 try {
-                    console.log("Cargando usuario y cursos...");
+                    //console.log("Cargando usuario y cursos...");
                     const usuario = await obtenerDatosUsuario();
-                    console.log("Usuario obtenido:", usuario);
+                    //console.log("Usuario obtenido:", usuario);
                     if (!usuario || !usuario.id) {
                         throw new Error('Usuario no encontrado');
                     }
@@ -32,10 +32,10 @@ const MisCursos = ({ navigation, route }) => {
                     setCursos([]); // 🔧 LIMPIAR CURSOS ANTES DE CARGAR NUEVOS
 
                     const data_cursos = await obtenerCursosPorUser(usuario.id);
-                    console.log("Cursos obtenidos:", data_cursos);
+                    //console.log("Cursos obtenidos:", data_cursos);
                     setCursos(data_cursos);
                 } catch (error) {
-                    console.error('Error al cargar usuario y cursos:', error);
+                    //console.error('Error al cargar usuario y cursos:', error);
                     Alert.alert('Error', 'Hubo un problema al obtener los cursos.');
                 } finally {
                     setIsLoading(false);
@@ -76,7 +76,7 @@ const MisCursos = ({ navigation, route }) => {
                 Alert.alert("Error", "No se pudo eliminar el curso.");
             }
         } catch (error) {
-            console.error("Error al eliminar el curso:", error);
+            //console.error("Error al eliminar el curso:", error);
             Alert.alert("Error", "Hubo un problema al eliminar el curso.");
         } finally {
             hideConfirmDeleteModal();

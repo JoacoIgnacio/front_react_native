@@ -22,7 +22,7 @@ const CrearCursoFormulario = ({ navigation }) => {
         setIsLoading(true);
         try {
             const usuario = await obtenerDatosUsuario();
-            console.log("Usuario obtenido:", usuario);
+            //console.log("Usuario obtenido:", usuario);
             if (!usuario || !usuario.id) {
                 throw new Error('Usuario no encontrado');
             }
@@ -36,7 +36,7 @@ const CrearCursoFormulario = ({ navigation }) => {
                 Alert.alert('Error', response_guardar_curso.error || 'Hubo un problema al crear el curso.');
             }
         } catch (error) {
-            console.error('Error al obtener usuario o crear curso:', error);
+            //console.error('Error al obtener usuario o crear curso:', error);
             Alert.alert('Error', 'Hubo un problema al crear el curso.');
         } finally {
             setIsLoading(false);

@@ -28,12 +28,15 @@ export default function CameraComponent({ alumno, asignatura, ANSWER_KEY }) {
         });
 
 
-        if (result.canceled) {
+        if (result.canceled || !result.assets || result.assets.length === 0) {
             return;
         }
 
+        const imageUri = result.assets[0].uri;
+
+
         try {
-            const fileInfo = await FileSystem.getInfoAsync(result.assets[0].uri);
+            const fileInfo = await FileSystem.getInfoAsync(imageUri);
             if (!fileInfo.exists) {
                 alert("El archivo no existe.");
                 return;
@@ -62,7 +65,7 @@ export default function CameraComponent({ alumno, asignatura, ANSWER_KEY }) {
                 Alert.alert("Error", "Error al procesar la imagen.");
             }
         } catch (error) {
-            console.error("Error al obtener información del archivo:", error);
+            //console.error("Error al obtener información del archivo:", error);
             Alert.alert("Error", "Ha ocurrido un error al procesar la imagen.");
         }
     };

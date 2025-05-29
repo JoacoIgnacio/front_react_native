@@ -28,7 +28,7 @@ const registrarUsuario = async (username, email, contrasena) => {
             return false;
         }
     } catch (error) {
-        console.error('Error al registrar usuario:', error.message);
+        //console.error('Error al registrar usuario:', error.message);
         Alert.alert('Error', 'No se pudo conectar con el servidor');
         return false;
     }

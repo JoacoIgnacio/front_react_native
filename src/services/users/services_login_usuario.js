@@ -21,7 +21,7 @@ const loginUsuario = async (email, contrasena) => {
         try {
             data = JSON.parse(raw);
         } catch (e) {
-            console.error("Respuesta inesperada:", raw);
+            //console.error("Respuesta inesperada:", raw);
             Alert.alert('Error', 'El servidor devolvió una respuesta no válida.');
             return false;
         }
@@ -34,7 +34,7 @@ const loginUsuario = async (email, contrasena) => {
             return false;
         }
     } catch (error) {
-        console.error('Error al iniciar sesión:', error.message);
+        //console.error('Error al iniciar sesión:', error.message);
         Alert.alert('Error', 'No se pudo conectar con el servidor');
         return false;
     }
